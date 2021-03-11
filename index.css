@@ -1,20 +1,78 @@
-.container {
+* {
+  padding: 0;
+  margin: 0;
+  box-sizing: border-box;
 }
 
-.header {
-  display: flex;
-  justify-content: space-between;
-}
-.header-child {
-  text-align: center;
-  width: 6rem;
-}
-.row {
-  display: flex;
-  justify-content: space-around;
+body {
+  background: linear-gradient(to right, #25c481, #25b7c4);
+  font-family: "Roboto", sans-serif;
+  color: white;
+  padding: 0 5rem;
+  font-size: 10px;
 }
 
-.row-child {
+thead {
+  background-color: rgba(255, 255, 255, 0.3);
+}
+
+table {
+  width: 100%;
+}
+
+th {
+  padding: 20px 15px;
   text-align: center;
-  width: 6rem;
+  font-weight: 500;
+  font-size: 12px;
+  color: #fff;
+  text-transform: uppercase;
+}
+
+td {
+  padding: 15px;
+  text-align: center;
+  vertical-align: middle;
+  font-weight: 300;
+  font-size: 12px;
+  color: #fff;
+  border-bottom: solid 1px rgba(255, 255, 255, 0.1);
+}
+
+input {
+  width: 4rem;
+}
+
+.btn {
+  padding: 0.5rem 2rem;
+  text-decoration: none;
+  display: inline-block;
+  border-radius: 10rem;
+  transition: all 0.2s;
+  position: relative;
+  border: none;
+  cursor: pointer;
+}
+
+.btn:hover {
+  transform: translateY(-0.3rem);
+}
+
+.search-container {
+  padding: 1rem 0;
+}
+
+tr.animate {
+  animation: scale 1s linear;
+}
+
+@keyframes scale {
+  from {
+    transform: scale(1);
+    opacity: 1;
+  }
+  to {
+    transform: scale(3);
+    opacity: 0;
+  }
 }

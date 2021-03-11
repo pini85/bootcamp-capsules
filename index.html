@@ -4,10 +4,23 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <link rel="stylesheet" href="index.css" />
+    <link rel="stylesheet" href="normalize.css" />
     <title>Capsule Party</title>
   </head>
   <body>
-    <div class="container"></div>
+    <div class="container">
+      <div class="search-container">
+        <input type="search" placeholder="search" />
+        <select name="category"></select>
+      </div>
+
+      <table cellpadding="0" cellspacing="0" border="0" class="table">
+        <thead>
+          <tr></tr>
+        </thead>
+        <tbody id="table-data"></tbody>
+      </table>
+    </div>
     <script src="index.js"></script>
   </body>
 </html>

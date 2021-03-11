@@ -1,98 +1,152 @@
-const data = [];
+let data = [];
 
 const displayData = async () => {
   createHeaders(data);
   createRow(data);
-  //   createButtons(data);
+  createCategoryDropDown();
 };
-const createHeaders = (users) => {
-  const container = document.querySelector(".container");
-  const headerEl = document.createElement("div");
-  headerEl.classList.add("header");
 
+const createHeaders = (users) => {
+  const container = document.querySelector("thead > tr");
   const headers = Object.keys(users[0]);
   headers.forEach((header) => {
-    createElement("div", "header-child", header, headerEl);
+    const tableHeadEl = document.createElement("th");
+    tableHeadEl.innerHTML = header;
+    container.appendChild(tableHeadEl);
   });
-  container.appendChild(headerEl);
 };
+
 const createRow = (users) => {
-  const container = document.querySelector(".container");
+  const container = document.querySelector("#table-data");
+  container.innerHTML = "";
   users.forEach((user) => {
-    const rowContainerEl = document.createElement("div");
-    rowContainerEl.classList.add("row");
-
-    createElement("div", "row-child", user.id, rowContainerEl);
-    createElement("div", "row-child", user.firstName, rowContainerEl, user.id);
-    createElement("div", "row-child", user.lastName, rowContainerEl, user.id);
-    createElement("div", "row-child", user.capsule, rowContainerEl, user.id);
-    createElement("div", "row-child", user.age, rowContainerEl, user.id);
-    createElement("div", "row-child", user.city, rowContainerEl, user.id);
-    createElement("div", "row-child", user.gender, rowContainerEl, user.id);
-    createElement("div", "row-child", user.hobby, rowContainerEl, user.id);
-    createButtons(rowContainerEl, "edit");
-    createButtons(rowContainerEl, "delete");
-    container.appendChild(rowContainerEl);
+    const row = container.insertRow();
+    row.insertCell().innerHTML = user.id;
+    row.insertCell().innerHTML = user.firstName;
+    row.insertCell().innerHTML = user.lastName;
+    row.insertCell().innerHTML = user.capsule;
+    row.insertCell().innerHTML = user.age;
+    row.insertCell().innerHTML = user.city;
+    row.insertCell().innerHTML = user.gender;
+    row.insertCell().innerHTML = user.hobby;
+    row.insertCell().appendChild(createButtons("Edit"));
+    row.insertCell().appendChild(createButtons("Delete"));
   });
 };
 
-const createButtons = (parent, type, editActive) => {
-  console.count();
-  const buttonEditEl = document.createElement("button");
-  buttonEditEl.textContent = type;
-  buttonEditEl.addEventListener(
-    "click",
-    editActive ? confirmEditRows : editRows
-  );
+const createCategoryDropDown = () => {
+  const select = document.querySelector("select");
+  select.innerHTML = "";
+  for (const val in data[0]) {
+    if (val !== "id") {
+      const option = document.createElement("option");
+      option.value = val;
+      option.innerHTML = val;
+      select.appendChild(option);
+    }
+  }
+};
 
-  //   const buttonDeleteEl = document.createElement("button");
-  //   buttonDeleteEl.textContent = "Delete";
-  parent.appendChild(buttonEditEl);
-  //   parent.appendChild(buttonDeleteEl);
+const manageEvents = (type, e) => {
+  switch (type) {
+    case "Edit":
+      editRows(e);
+      break;
+    case "Delete":
+      deleteData(e);
+      break;
+    case "Confirm":
+      confirmEditRows(e);
+      break;
+    case "Cancel":
+      cancelEditRows(e);
+      break;
+  }
 };
 
 const editRows = (e) => {
-  const rows = e.target.parentNode.children;
-  const parent = e.target.parentNode;
+  const idCell = e.target.parentNode.parentNode.children[0];
+  const rows = e.target.parentNode.parentNode.children;
+  const parent = e.target.parentNode.parentNode;
+  const header = document.querySelectorAll("thead > tr > th");
 
-  [...rows].forEach((el) => {
-    if (el.tagName === "BUTTON") {
-      el.remove();
-      return createButtons(parent, true);
+  [...rows].forEach((el, i) => {
+    if (idCell === el) {
+      return;
+    }
+    if (el.innerText === "Edit") {
+      el.innerHTML = "";
+      return el.appendChild(createButtons("Confirm"));
+    }
+    if (el.innerText === "Delete") {
+      el.innerHTML = "";
+      return el.appendChild(createButtons("Cancel"));
     }
     const text = el.textContent;
     el.innerHTML = "";
-
-    createElement("input", "x", text, parent);
+    createInput("input", header[i].innerText, text, el);
   });
 };
-const confirmEditRows = () => {
-  console.log("yup");
+
+const deleteData = (e) => {
+  console.log(e.target.parentNode.parentNode);
+  e.target.parentNode.parentNode.classList.add("animate");
+  const index = data.findIndex(
+    (student) =>
+      student.id ===
+      Number(e.target.parentNode.parentNode.children[0].innerText)
+  );
+  setTimeout(() => {
+    data.splice(index, 1);
+    createRow(data);
+  }, 1000);
 };
 
-const createElement = (type, className, content, parent) => {
-  const element = document.createElement(type);
-  element.classList.add(className);
-  if (type === "input") {
-    element.value = content;
-    console.log(element);
-  } else element.textContent = content;
+const confirmEditRows = (e) => {
+  const index = Number(e.target.parentNode.parentNode.children[0].innerText);
+  const header = document.querySelectorAll("thead > tr > th");
+  const inputs = e.target.parentNode.parentNode.children;
+  [...inputs].forEach((el, i) => {
+    if (el.children[0] && header[i]) {
+      const property = header[i].innerText;
+      data[index][property] = el.children[0].value;
+    }
+  });
+  createRow(data);
+};
 
+const cancelEditRows = (e) => {
+  createRow(data);
+};
+
+const createButtons = (type) => {
+  const buttonEl = document.createElement("button");
+  buttonEl.innerText = type;
+  buttonEl.classList.add("btn");
+  buttonEl.addEventListener("click", (e) => {
+    manageEvents(type, e);
+  });
+  return buttonEl;
+};
+
+const createInput = (type, name, content, parent) => {
+  const element = document.createElement(type);
+  element.setAttribute("name", name);
+  element.value = content;
   parent.appendChild(element);
 };
-const addEventListeners = (el, type, fn) => {};
 
 const getData = async () => {
   const users = await (
     await fetch("https://apple-seeds.herokuapp.com/api/users/")
   ).json();
-  await Promise.all(
+  const allData = await Promise.all(
     users.map(async (u, i) => {
       const userDetail = await fetch(
         `https://apple-seeds.herokuapp.com/api/users/${u.id}`
       );
       const extra = await userDetail.json();
-      data.push({
+      return {
         id: u.id,
         firstName: u.firstName,
         lastName: u.lastName,
@@ -101,9 +155,23 @@ const getData = async () => {
         city: extra.city,
         gender: extra.gender,
         hobby: extra.hobby,
-      });
+      };
     })
   );
+  data = [...allData];
   displayData();
 };
 getData();
+
+const search = (e) => {
+  const value = e.target.value.toLowerCase();
+  const category = document.querySelector("select").value;
+  const filteredData = [...data].filter((el) => {
+    const property = String(el[category]).toLowerCase();
+    return property.startsWith(value);
+  });
+  createRow(filteredData);
+};
+
+const inputSearch = document.querySelector("input[type='search']");
+inputSearch.addEventListener("keyup", (e) => search(e));
