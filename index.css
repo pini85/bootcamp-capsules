@@ -5,6 +5,10 @@
 }
 
 body {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
   background: linear-gradient(to right, #25c481, #25b7c4);
   font-family: "Roboto", sans-serif;
   color: white;
@@ -64,6 +68,49 @@ input {
 
 tr.animate {
   animation: scale 1s linear;
+}
+.spinner-4.hidden {
+  display: none;
+}
+.spinner-4 {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  text-align: center;
+  width: 90px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.spinner-4-1,
+.spinner-4-2,
+.spinner-4-3 {
+  height: 15px;
+  width: 15px;
+  background: turquoise;
+  border-radius: 50%;
+  animation: circle-bounce 1s linear infinite;
+}
+
+.spinner-4-2 {
+  animation-delay: 0.25s;
+}
+.spinner-4-3 {
+  animation-delay: 0.5s;
+}
+
+@keyframes circle-bounce {
+  0% {
+    transform: initial;
+  }
+
+  30% {
+    transform: translateY(-15px);
+  }
+  60% {
+    transform: initial;
+  }
 }
 
 @keyframes scale {

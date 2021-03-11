@@ -1,5 +1,5 @@
 let data = [];
-
+let isLoading = false;
 const displayData = async () => {
   createHeaders(data);
   createRow(data);
@@ -136,7 +136,18 @@ const createInput = (type, name, content, parent) => {
   parent.appendChild(element);
 };
 
+const handleLoading = () => {
+  console.log(isLoading);
+  const spinner = document.querySelector(".spinner-4");
+  if (isLoading) {
+    return spinner.classList.remove("hidden");
+  }
+  return spinner.classList.add("hidden");
+};
+
 const getData = async () => {
+  isLoading = true;
+  handleLoading();
   const users = await (
     await fetch("https://apple-seeds.herokuapp.com/api/users/")
   ).json();
@@ -158,6 +169,8 @@ const getData = async () => {
       };
     })
   );
+  isLoading = false;
+  handleLoading();
   data = [...allData];
   displayData();
 };
